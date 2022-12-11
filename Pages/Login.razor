@@ -1,0 +1,63 @@
+﻿@page "/login"
+@using ParkerRandalWeb.Authentication
+@using ParkerRandalWeb.Models
+@inject IAuthenticationService AuthService
+@inject NavigationManager NavManager
+
+<h3>login</h3>
+@if (showAuthenticationError) {
+	<div class="alert alert-danger" role="alert">
+		<p>@authenticationErrorText</p>
+	</div>
+}
+
+<EditForm Model="userModel" OnValidSubmit="ExecuteLogin " class="card card-body bg-light mt-5">
+	<DataAnnotationsValidator />
+	<ValidationSummary />
+
+	<div class="form-group row">
+		<label for="email" class="col-md-2 col-form-label">Email: </label>
+		<div class="col-md-10">
+			<InputText id="email" class="form-control" @bind-Value="userModel.UserName" />
+			<ValidationMessage For="@(() => userModel.UserName)" />
+		</div>
+	</div>
+
+	<div class="form-group row">
+		<label for="password" class="col-md-2 col-form-label">Password: </label>
+		<div class="col-md-10">
+			<InputText id="password" type="password" class="form-control" @bind-Value="userModel.Password" />
+			<ValidationMessage For="@(() => userModel.Password)" />
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12 text-right">
+			<button type="submit" class="btn btn-success">Log In</button>
+		</div>
+	</div>
+</EditForm>
+
+@code {
+	private AuthenticationUserModel userModel = new();
+
+	private bool showAuthenticationError = false;
+	private string authenticationErrorText ="";
+
+	private async Task ExecuteLogin()
+	{
+		showAuthenticationError = false;
+		var result = await AuthService.Login(userModel);
+
+		if (result is not null)
+		{
+			NavManager.NavigateTo("/");
+		}
+		else 
+		{
+			authenticationErrorText = "There was an Error when trying to log in";
+			showAuthenticationError = true;
+		}
+	}
+
+}
