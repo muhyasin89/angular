@@ -1,24 +1,24 @@
 ﻿@inject ILocalStorageService LocalStorage
-
 @inject AuthenticationStateProvider AuthStateProvider
 
 <MudNavMenu>
-    <MudNavLink Href="/" Match="NavLinkMatch.All">Dashboard</MudNavLink>
-    <MudNavLink Href="/counter" Match="NavLinkMatch.Prefix">Counter</MudNavLink>
-    <MudNavLink Href="/fetchdata" Match="NavLinkMatch.Prefix">Fetch Data</MudNavLink>
-    <MudNavGroup Title="Settings" Expanded="true">
-        <MudNavLink Href="/users"  Match="NavLinkMatch.Prefix">Users</MudNavLink>
-        <MudNavLink Href="/security"  Match="NavLinkMatch.Prefix">Security</MudNavLink>
-    </MudNavGroup>
-    <AuthorizeView>
-        <NotAuthorized>
-            <MudNavLink Href="/login" Match="NavLinkMatch.Prefix">Login</MudNavLink>
-        </NotAuthorized>
+     <AuthorizeView>
         <Authorized>
-            <MudNavLink @onclick="Logout">Logout</MudNavLink>
-        
+            <MudNavLink Href="/" Match="NavLinkMatch.All">Dashboard</MudNavLink>
+            <MudNavLink Href="/counter" Match="NavLinkMatch.Prefix">Counter</MudNavLink>
+            <MudNavLink Href="/fetchdata" Match="NavLinkMatch.Prefix">Fetch Data</MudNavLink>
+            <MudNavGroup Title="Settings" Expanded="true">
+                <MudNavLink Href="/users"  Match="NavLinkMatch.Prefix">Users</MudNavLink>
+                <MudNavLink Href="/security"  Match="NavLinkMatch.Prefix">Security</MudNavLink>
+            </MudNavGroup>
+             <MudNavLink @onclick="Logout">Logout</MudNavLink>
         </Authorized>
-      
+
+    <NotAuthorized>
+        <MudNavLink Href="/login" Match="NavLinkMatch.Prefix">Login</MudNavLink>
+    </NotAuthorized>
+    
+           
     </AuthorizeView>
   
 </MudNavMenu>
