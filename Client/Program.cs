@@ -5,6 +5,8 @@ using MudBlazor.Services;
 using Blazored.LocalStorage;
 using ParkerRandalWeb.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
+using ParkerRandalWeb.Services;
+
 
 namespace ParkerRandalWeb
 {
@@ -16,11 +18,14 @@ namespace ParkerRandalWeb
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
             builder.Services.AddMudServices();
+           
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddAuthorizationCore();
+            
+            builder.Services.AddScoped<IHttpService, HttpService>();
             builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
 
-
+          
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
             await builder.Build().RunAsync();

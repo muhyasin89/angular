@@ -1,28 +1,32 @@
 ﻿@page "/login"
+
 @inject ILocalStorageService LocalStorage
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthStateProvider
+@inject IHttpService httpService
 
 <h3>Login</h3>
 <EditForm Model="user" OnSubmit="HandleLogin">
 	<div class="form-group">
 		<label for="username">Username</label>
-		<InputText id="username" @bind-Value="user.Username" class="form-control" />
+		<InputText id="username" @bind-Value="user.username" class="form-control" />
 	</div>
 	<div class="form-group">
 		<label for="username">password</label>
-		<InputText id="password" type="password" @bind-Value="user.Password" class="form-control" />
+		<InputText id="password" type="password" @bind-Value="user.password" class="form-control" />
 	</div>
 	<button type="submit" class="btn btn-primary" >Submit</button>
 </EditForm>
 
 @code {
 	private User user = new User();
-
-	private async void HandleLogin() 
+	
+	private async Task HandleLogin() 
 	{
 		Console.WriteLine("Log me In");
-		await LocalStorage.SetItemAsync("username", user.Username);
+		var token = await httpService.Post<TokenModel>("http://localhost:8000/auth-token/", new { user.username, user.password });
+		Console.WriteLine(token);
+		await LocalStorage.SetItemAsync("token", token);
 		await AuthStateProvider.GetAuthenticationStateAsync();
 		NavigationManager.NavigateTo("");
 	}
