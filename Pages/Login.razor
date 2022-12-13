@@ -1,29 +1,59 @@
 ﻿@page "/login"
+@using ParkerRandalWeb.Authorization
 @inject ILocalStorageService LocalStorage
-@inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthStateProvider
+@inject IAuthenticationService AuthService
+@inject NavigationManager NavManager
 
 <h3>Login</h3>
-<EditForm Model="user" OnSubmit="HandleLogin">
+@if (showAuthenticationError)
+{
+	<div class="alert alert-danger" role="alert">
+		<p>@authenticationErrorText</p>
+	</div>
+}
+<EditForm Model="userModel" OnValidSubmit="ExecuteLogin">
+	<DataAnnotationsValidator />
+	<ValidationSummary />
 	<div class="form-group">
 		<label for="username">Username</label>
-		<InputText id="username" @bind-Value="user.Username" class="form-control" />
+		<InputText id="username" @bind-Value="userModel.UserName" class="form-control" />
+		<ValidationMessage For="@(() => userModel.UserName)" />
 	</div>
 	<div class="form-group">
 		<label for="username">password</label>
-		<InputText id="password" type="password" @bind-Value="user.Password" class="form-control" />
+		<InputText id="password" type="password" @bind-Value="userModel.Password" class="form-control" />
+		<ValidationMessage For="@(() => userModel.Password)" />
 	</div>
 	<button type="submit" class="btn btn-primary" >Submit</button>
 </EditForm>
 
 @code {
-	private User user = new User();
+	private AuthenticationUserModel userModel = new();
+	private bool showAuthenticationError = false;
+	private string authenticationErrorText = "";
 
 	private async void HandleLogin() 
 	{
 		Console.WriteLine("Log me In");
-		await LocalStorage.SetItemAsync("username", user.Username);
+		await LocalStorage.SetItemAsync("username", userModel.UserName);
 		await AuthStateProvider.GetAuthenticationStateAsync();
-		NavigationManager.NavigateTo("");
+		NavManager.NavigateTo("");
+	}
+
+	private async Task ExecuteLogin()
+	{
+		var showAuthenticationError = false;
+		var result = await AuthService.Login(userModel);
+
+		if (result is not null)
+		{
+			NavManager.NavigateTo("/");
+		}
+		else
+		{
+			var authenticationErrorText = "There was an Error when trying to log in";
+			showAuthenticationError = true;
+		}
 	}
 }
